@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Isa Print Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #1a1a1a;
+      color: #fff;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    body.light {
+      background-color: #f9f9f9;
+      color: #111;
+    }
+    header {
+      background-color: #32cd32;
+      padding: 15px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+    .header-top {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    header h1 {
+      font-size: 22px;
+    }
+    header a {
+      color: #000;
+      text-decoration: none;
+    }
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .theme-toggle input[type="checkbox"] {
+      width: 40px;
+      height: 20px;
+    }
+    .search-box {
+      width: 100%;
+      text-align: center;
+      margin-top: 10px;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      max-width: 400px;
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    .suggestions {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #000;
+      background: #fff;
+      border-radius: 4px;
+      padding: 10px;
+      margin-top: 5px;
+      max-width: 400px;
+      width: 100%;
+      text-align: left;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+    }
+    .suggestion-item {
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    .suggestion-item:hover {
+      background-color: #e0e0e0;
+    }
+    .container {
+      display: flex;
+      flex-direction: row;
+    }
+    .sidebar {
+      width: 200px;
+      background-color: #2c2c2c;
+      padding: 20px;
+    }
+    .sidebar ul {
+      list-style: none;
+    }
+    .sidebar li {
+      margin-bottom: 10px;
+    }
+    .sidebar a {
+      color: #ccc;
+      text-decoration: none;
+    }
+    .sidebar a:hover {
+      color: #32cd32;
+    }
+    .main {
+      flex: 1;
+      padding: 20px;
+    }
+    .category-title {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-size: 22px;
+      color: #32cd32;
+    }
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .product {
+      background-color: #333;
+      padding: 10px;
+      border-radius: 10px;
+      width: 220px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .product:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .product img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .description {
+      display: none;
+      font-size: 14px;
+      margin-top: 8px;
+      color: #aaa;
+    }
+    .product.active .description {
+      display: block;
+    }
+    .buy-link {
+      display: inline-block;
+      margin-top: 10px;
+      background-color: #32cd32;
+      color: #000;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .buy-link:hover {
+      background-color: #28a428;
+    }
+    footer {
+      background-color: #2c2c2c;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+    footer a {
+      color: #32cd32;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        text-align: center;
+      }
+      .products {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-top">
+      <a href="#top"><h1 id="top">Isa Print Studio</h1></a>
+      <div class="theme-toggle">
+        <label for="theme">Тема</label>
+        <input type="checkbox" id="theme" />
+      </div>
+    </div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Поиск товаров...">
+      <div class="suggestions" id="suggestions"></div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="sidebar">
+      <h2>Категории</h2>
+      <ul>
+        <li><a href="#category-tshirts">Футболки</a></li>
+        <li><a href="#category-tanktops">Майки</a></li>
+        <li><a href="#category-hoodies">Толстовки</a></li>
+        <li><a href="#category-stickers">Наклейки</a></li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <div id="category-tshirts">
+        <h2 class="category-title">Футболки</h2>
+        <div class="products" id="tshirts"></div>
+      </div>
+      <div id="category-tanktops">
+        <h2 class="category-title">Майки</h2>
+        <div class="products" id="tanktops"></div>
+      </div>
+      <div id="category-hoodies">
+        <h2 class="category-title">Толстовки</h2>
+        <div class="products" id="hoodies"></div>
+      </div>
+      <div id="category-stickers">
+        <h2 class="category-title">Наклейки</h2>
+        <div class="products" id="stickers"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Связаться со мной:</p>
+    <a href="https://instagram.com/sabitovisl" target="_blank">Instagram</a>
+    <a href="https://wa.me/77007358329" target="_blank">WhatsApp</a>
+    <a href="https://t.me/sabitoff1" target="_blank">Telegram</a>
+  </footer>
+
+  <script>
+    const categories = ['tshirts', 'tanktops', 'hoodies', 'stickers'];
+    const products = {};
+    categories.forEach(cat => {
+      products[cat] = Array.from({ length: 10 }, (_, i) => ({
+        id: `${cat}-${i + 1}`,
+        name: `${cat.toUpperCase()} ${i + 1}`,
+        img: `images/${cat}${i + 1}.jpg`,
+        desc: `Описание товара ${i + 1} из категории ${cat}`
+      }));
+    });
+
+    categories.forEach(cat => {
+      const container = document.getElementById(cat);
+      products[cat].forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'product';
+        el.id = p.id;
+        el.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" />
+          <h3>${p.name}</h3>
+          <div class="description">${p.desc}</div>
+          <a class="buy-link" href="https://wa.me/77007358329" target="_blank">Купить</a>
+        `;
+        el.onclick = () => el.classList.toggle('active');
+        container.appendChild(el);
+      });
+    });
+
+    document.getElementById('theme').addEventListener('change', function () {
+      document.body.classList.toggle('light');
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+      const val = this.value.toLowerCase();
+      const suggestionsBox = document.getElementById('suggestions');
+      suggestionsBox.innerHTML = '';
+      if (val.length > 0) {
+        const matches = [];
+        categories.forEach(cat => {
+          matches.push(...products[cat].filter(p => p.name.toLowerCase().includes(val)));
+        });
+        matches.slice(0, 5).forEach(p => {
+          const div = document.createElement('div');
+          div.className = 'suggestion-item';
+          div.innerText = p.name;
+          div.onclick = () => {
+            document.location.hash = `#${p.id}`;
+            suggestionsBox.innerHTML = '';
+          };
+          suggestionsBox.appendChild(div);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
